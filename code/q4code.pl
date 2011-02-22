@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use HTML::Entities;
 require "extract.pl";
 
 my @keywords = ( "for", "loop" );
@@ -14,6 +15,7 @@ while (<DUMMY>) {
 }
 close(DUMMY);
 $ext->set_data($data);
-print $ext->extract_code();
+print decode_entities($ext->extract_code());
+print "Probability: " . $ext->get_probability() . "\n";
 
 1;

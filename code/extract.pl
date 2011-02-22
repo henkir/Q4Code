@@ -12,6 +12,7 @@ package Extract;
 # Want to get warnings to prevent sloppy coding.
 use strict;
 use warnings;
+use Text::Levenshtein qw(distance);
 
 # Creates a new instance of the class.
 # language (optional) programming language to extract
@@ -22,6 +23,7 @@ sub new {
     $self->{LANGUAGE} = shift;
     $self->{KEYWORDS} = shift;
     $self->{DATA} = undef;
+    $self->{PROBABILITY} = undef;
     bless($self, $class);
     return $self;
 }
@@ -36,6 +38,12 @@ sub get_language {
 sub get_keywords {
     my $self = shift;
     return $self->{KEYWORDS};
+}
+
+# Gets the probability for the latest extraction.
+sub get_probability {
+    my $self = shift;
+    return $self->{PROBABILITY};
 }
 
 # Sets the language to extract.
@@ -67,8 +75,8 @@ sub extract_code {
     my $code = "";
     my $content = $text->{"content"};
     # Get all code blocks
-    while ($content =~ /<code>([^<>]*)<\/code>/sg) {
-	$code .= $1;
+    while ($content =~ /(<code>[^<>]*<\/code>)/sg) {
+	$code .= $1 . "\n";
     }
     return $code;
 }
@@ -94,9 +102,34 @@ sub extract_text {
 	    $i += 1;
 	}
     }
+    $i = 0;
+
+    my @probabilities = ();
+    my $max = 0.0;
+    my $maxindex = 0;
+    my @keywords = $self->{KEYWORDS};
+    for my $obj (@alternatives) {
+	$probabilities[$i] = 1.0;
+	for (my $j = 0; $j < @keywords; $j += 1) {
+	    if ($obj->{"title"} =~ /[>\s]+{$self->{KEYWORDS}[$j]}[<\s]+/isg) {
+		$probabilities[$i] *= 1;
+	    } elsif ($obj->{"title"} =~ /$self->{KEYWORDS}[$j]/isg) {
+		$probabilities[$i] *= 0.8;
+	    } else {
+		$probabilities[$i] *= 0.6;
+	    }
+	}
+	if ($probabilities[$i] > $max) {
+	    $max = $probabilities[$i];
+	    $maxindex = $i;
+	}
+	$i += 1;
+    }
+
+    $self->{PROBABILITY} = $max;
 
     # TODO: Get most probable alternative
-    return $alternatives[1];
+    return $alternatives[$maxindex];
 }
 
 # Returns the current language and keywords of the object.
