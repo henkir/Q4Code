@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<sections>
+<section>
+  <title>For Loops</title>
+  <content>Perl's C-style for loop works like the corresponding while loop; that means that this:
+<code>
+    for ($i = 1; $i &lt; 10; $i++) {
+	...
+    }
+</code>
+is the same as this:
+<code>
+    $i = 1;
+    while ($i &lt; 10) {
+	...
+    } continue {
+	$i++;
+    }
+</code>
+There is one minor difference: if variables are declared with my in the initialization section of the for , the lexical scope of those variables is exactly the for loop (the body of the loop and the control sections).
+Besides the normal array index looping, for can lend itself to many other interesting applications. Here's one that avoids the problem you get into if you explicitly test for end-of-file on an interactive file descriptor causing your program to appear to hang.
+<code>
+    $on_a_tty = -t STDIN &amp;&amp; -t STDOUT;
+    sub prompt { print &quot;yes? &quot; if $on_a_tty }
+    for ( prompt(); &lt;STDIN&gt;; prompt() ) {
+	# do something
+    }
+</code>
+Using readline (or the operator form, &lt;EXPR&gt; ) as the conditional of a for loop is shorthand for the following. This behaviour is the same as a while loop conditional.
+<code>
+    for ( prompt(); defined( $_ = &lt;STDIN&gt; ); prompt() ) {
+        # do something
+    }
+</code>
+  </content>
+</section>
+<section>
+<title>Test section</title>
+<content>Here is a test section. AAAAAAAAAAAH.
+<code>if good then bad</code>
+trololo
+</content>
+</section>
+</sections>
