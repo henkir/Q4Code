@@ -1,0 +1,17 @@
+################################################################################
+############################### Q4Code #########################################
+################################################################################
+
+Authors: akebe572, andve223, henho106, jonhe442
+
+Description:
+
+
+How to use:
+Run selected Perl script file by typing "perl file.pl" in the terminal, or if
+it is executable "./file.pl".
+
+NOTE:
+Use code directory for all code files.
+Put eventual documentation files in the doc directory.
+All material for the report goes in Google Docs.
