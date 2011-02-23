@@ -10,8 +10,11 @@ require "get_perl.pl";
 # Determine type of question, language and keywords
 
 my @keywords = ( "for", "loop" ); # test keywords
-# Get data from internet, should be a class me thinks
-my $data = get_perl("for loop");
+# Get data from internet
+my $get_perl = GetPerl->new();
+$get_perl->set_keywords(\@keywords);
+my $data = $get_perl->get_xml();
+
 # Create object for extracting information
 my $ext = Extract->new("perl", \@keywords);
 # Set data of the extract object, formatted page from internet

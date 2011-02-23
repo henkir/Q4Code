@@ -12,7 +12,6 @@ package Extract;
 # Want to get warnings to prevent sloppy coding.
 use strict;
 use warnings;
-use Text::Levenshtein qw(distance);
 
 # Creates a new instance of the class.
 # language (optional) programming language to extract
@@ -108,12 +107,20 @@ sub extract_text {
     my $max = 0.0;
     my $maxindex = 0;
     my @keywords = $self->{KEYWORDS};
+    # Calculate probabilities based on occurrence of keywords
     for my $obj (@alternatives) {
 	$probabilities[$i] = 1.0;
 	for (my $j = 0; $j < @keywords; $j += 1) {
 	    if ($obj->{"title"} =~ /[>\s]+{$self->{KEYWORDS}[$j]}[<\s]+/isg) {
 		$probabilities[$i] *= 1;
 	    } elsif ($obj->{"title"} =~ /$self->{KEYWORDS}[$j]/isg) {
+		$probabilities[$i] *= 0.8;
+	    } else {
+		$probabilities[$i] *= 0.6;
+	    }
+	    if ($obj->{"content"} =~ /[>\s]+{$self->{KEYWORDS}[$j]}[<\s]+/isg) {
+		$probabilities[$i] *= 1;
+	    } elsif ($obj->{"content"} =~ /$self->{KEYWORDS}[$j]/isg) {
 		$probabilities[$i] *= 0.8;
 	    } else {
 		$probabilities[$i] *= 0.6;
@@ -128,7 +135,7 @@ sub extract_text {
 
     $self->{PROBABILITY} = $max;
 
-    # TODO: Get most probable alternative
+    # Return most probable keyword
     return $alternatives[$maxindex];
 }
 

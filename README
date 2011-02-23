@@ -8,6 +8,9 @@ Description:
 
 
 How to use:
+Make sure Google::Search is installed by running "sudo cpan" and after pressing
+enter until you see a prompt, you enter "install Google::Search". Installing it
+requires some time and pressing enter a few times.
 Run selected Perl script file by typing "perl file.pl" in the terminal, or if
 it is executable "./file.pl".
 

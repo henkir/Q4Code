@@ -1,8 +1,12 @@
 #!/usr/bin/perl
 #######################################################################
-#  A script for fetching the top search result html-file from google. #
-#  Arg1 is the search-word, returns a simple xml file encoded and all.#
+#  A class for fetching the top search result html-file from google.  #
+#  Uses keywords, returns a simple xml file encoded and all.          #
 #######################################################################
+
+# Bug: Last <code> not there when searching for "for loop", dont know why
+
+package GetPerl;
 
 use strict;
 use warnings;
@@ -10,9 +14,33 @@ use warnings;
 use Google::Search;
 use HTML::Entities;
 
-sub get_perl {
+sub new {
+    my $class = shift;
+    my $self = {};
+    $self->{KEYWORDS} = [];
+    bless($self, $class);
+    return $self;
+}
 
-    my $arg1 = shift;
+# Gets the array of keywords.
+sub get_keywords {
+    my $self = shift;
+    return $self->{KEYWORDS};
+}
+
+# Sets the array of keywords to use.
+sub set_keywords {
+    my $self = shift;
+    $self->{KEYWORDS} = shift;
+}
+
+# Gets an XML file of the documentation.
+sub get_xml {
+    my $self = shift;
+    my $arg1 = "";
+    for my $keyword (@{$self->{KEYWORDS}}) {
+	$arg1 .= $keyword . " ";
+    }
     my $search = Google::Search->Web("q" => "site:perldoc.perl.org $arg1");
     my $result = $search->first;
     my $url = $result->uri . "\n";
@@ -33,24 +61,26 @@ sub get_perl {
     my $section = 0;
 
     while (<$file>) {
-
-	if (/<a name="[A-Za-z\-]*"><\/a><h2>([A-Za-z\-]*)/){
+	#s/<a name="[^<]*"><\/a>//g;
+	#if (/<a name="[A-Za-z\-]*"><\/a><h2>([A-Za-z\-]*)/){
+	if (/<a name="[^<]*">[^<]*<\/a><h[1-6]>([^<]*)/s) {
 	    if ($section) {
 		$out .= "</content></section>\n";
 	    }
 	    $section = 1;
-	    $out .= "<section>\n";
+	    $out .= "<section><title>$1</title>\n<content>\n";
 
 	}
-	if (/<div/) {
+	if (/<div/ && $section == 1) {
 	    $section = 0;
 	    $out .= "</content></section>";
+	    last;
 	}
 	if ($section) {
-	    if (/<pre class="verbatim">/) {
+	    if (/<pre class="verbatim">/g) {
 		#KOD?! nämen va gott! äta taggar, formatera och skriva ut
-		s/<pre class="verbatim">/code\n/;
-		s/<\/pre>/\n\/code\n/;
+		s/<pre class="verbatim">/\ncode\n/g;
+		s/<\/pre>/\n\/code\n/g;
 		s/<\/li>/\n/g;
 		s/<[^>]*>//g;
 
@@ -58,24 +88,25 @@ sub get_perl {
 		s/&lt;/</g;
 		s/&gt;/>/g;
 		s/&#39;/'/g;
-
+		s/&quot;/"/g;
 
 		#koda tecken
 		encode_entities( $_, "<>&");
-		s/^code/<code>/g;
-		s/\/code/<\/code>/g;
-		s/&quot;/"/g;
-		$out .= $_;
+		s/^code/<code>/mg;
+		s/^\/code/<\/code>/mg;
 
-	    }elsif(/<h2>/){
+		$out .= $_;
+	    }
+	    #elsif(/<h2>/) {
 
 		# lägga dit överskrifter
 
-		s/<[^>]*>//g;
-		s/\n//g;
-		$out .= "<title>$_</title>\n<content>"
+	#	s/<[^>]*>//g;
+	#	s/\n//g;
+	#	$out .= "<title>$_</title>\n<content>"
 
-	    }else {
+	   # }
+	    else {
 		# äta taggar och skriva vanlig text, formatera fnuttar
 		s/<[^>]*>//g;
 		s/&quot;/"/g;
@@ -83,16 +114,12 @@ sub get_perl {
 		encode_entities( $_, "<>&");
 		$out .= "$_";
 
-	}
+	    }
 
 	}
-
-
     }
 
-
     $out .= "</sections>";
-
 
     close $file or die $!;
 
