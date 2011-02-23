@@ -1,5 +1,8 @@
 #!/usr/bin/perl
-# first arg is site, second is search word
+#######################################################################
+#  A script for fetching the top search result html-file from google. #
+#  Arg1 is the search-word, returns a simple xml file encoded and all.#
+#######################################################################
 
 use strict;
 use warnings;
@@ -7,10 +10,9 @@ use warnings;
 use Google::Search;
 use HTML::Entities;
 
-#entities_encode sträng_enc, de som ska enkådas <>&
+
 my $arg1 = shift;
-my $arg2 = shift;
-my $search = Google::Search->Web(q => "site:$arg1 $arg2");
+my $search = Google::Search->Web(q => "site:$perldoc.perl.org $arg1");
 my $result = $search->first;
 my $url = $result->uri . "\n";
 
@@ -20,7 +22,7 @@ my @splittedurl = split /\//, $url;
 my $filename = pop(@splittedurl);
 my $file;
 
-#`wget $url`;
+`wget $url`;
 
 open $file, $filename or die $!;
 
@@ -28,7 +30,7 @@ open $file, $filename or die $!;
 my $section = 0;
 
 while (<$file>) {
-  #lägg till whitespce sen, fast det går segt!
+  
   if(/<a name="[A-Za-z\-]*"><\/a><h2>([A-Za-z\-]*)/){
     if ($section) {
       print "</section>\n";
@@ -90,6 +92,6 @@ while (<$file>) {
 
 close $file or die $!;
 
-#`rm $file`
+`rm $file`
 
 1;
