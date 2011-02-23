@@ -6,21 +6,21 @@ use HTML::Entities;
 require "extract.pl";
 require "get_perl.pl";
 
-my @keywords = ( "for", "loop" );
-my $ext = Extract->new("perl", \@keywords);
+# Read question from user, command line or args
+# Determine type of question, language and keywords
 
-
-
-#open(DUMMY, "extract-data.xml") || die("Could not open extract-data.xml\n");
+my @keywords = ( "for", "loop" ); # test keywords
+# Get data from internet, should be a class me thinks
 my $data = get_perl("for loop");
-#while (<DUMMY>) {
-#    $data .= $_;
-#}
-#close(DUMMY);
-
+# Create object for extracting information
+my $ext = Extract->new("perl", \@keywords);
+# Set data of the extract object, formatted page from internet
 $ext->set_data($data);
+# Extract text or code depending on question type
 my $result = $ext->extract_text();
+# Print the title and content
 print decode_entities($result->{"title"} . "\n" . $result->{"content"} . "\n");
+# The extract class chooses by probability, print it too
 print "Probability: " . $ext->get_probability() . "\n";
 
 1;
