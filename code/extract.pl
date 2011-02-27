@@ -77,7 +77,10 @@ sub extract_code {
     while ($content =~ /(<code>[^<>]*<\/code>)/sg) {
 	$code .= $1 . "\n";
     }
-    return $code;
+
+    $text->{"content"} = $code;
+
+    return $text;
 }
 
 # Extracts text from data by using keywords, returns the most probable match.

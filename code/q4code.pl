@@ -5,18 +5,31 @@ use warnings;
 use HTML::Entities;
 require "extract.pl";
 require "get_perl.pl";
+require "question_extract.pl";
+
+# Usage: ./q4code "What does a for loop look like in perl?"
 
 # Read question from user, command line or args
 # Determine type of question, language and keywords
-
-my @keywords = ( "for", "loop" ); # test keywords
+my $qe = Question_extract->new();
+$qe->set_question($ARGV[0]);
+$qe->extract_information();
+my @keywords = $qe->get_keywords();
+my $language = $qe->extract_language();
 # Get data from internet
-my $get_perl = GetPerl->new();
-$get_perl->set_keywords(\@keywords);
-my $data = $get_perl->get_xml();
+my $get;
+
+if ($language eq "perl") {
+    $get = GetPerl->new();
+}
+else {
+    die "No such language\n";
+}
+$get->set_keywords(\@keywords);
+my $data = $get->get_xml();
 
 # Create object for extracting information
-my $ext = Extract->new("perl", \@keywords);
+my $ext = Extract->new($language, \@keywords);
 # Set data of the extract object, formatted page from internet
 $ext->set_data($data);
 # Extract text or code depending on question type
