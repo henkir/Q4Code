@@ -1,0 +1,7 @@
+What does a for loop look like?
+How to write a for loop?
+How to use switch case?
+How do you use if statements?
+What do if-statements look like?
+How to read from file?
+How do you read from a text file?
