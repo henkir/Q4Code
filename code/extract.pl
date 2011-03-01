@@ -126,7 +126,6 @@ sub extract_text {
 		$probabilities[$i] *= 1;
 		$matching_words += 1;
 	    } else {
-		print $self->{KEYWORDS}[$j], "\n";
 		$probabilities[$i] *= 0.6;
 	    }
 	    if ($obj->{"content"} =~ /$self->{KEYWORDS}[$j]/i) {
