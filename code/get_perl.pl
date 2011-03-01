@@ -17,7 +17,9 @@ use HTML::Entities;
 sub new {
     my $class = shift;
     my $self = {};
+    
     $self->{KEYWORDS} = [];
+   
     bless($self, $class);
     return $self;
 }
@@ -25,6 +27,7 @@ sub new {
 # Gets the array of keywords.
 sub get_keywords {
     my $self = shift;
+
     return $self->{KEYWORDS};
 }
 
@@ -34,16 +37,21 @@ sub set_keywords {
     $self->{KEYWORDS} = shift;
 }
 
-# Gets an XML file of the documentation.
-sub get_xml {
-    my $self = shift;
-    my $arg1 = "";
+#search the web with the new keywords
+sub search {
+  my $arg1;
     for my $keyword (@{$self->{KEYWORDS}}) {
 	$arg1 .= $keyword . " ";
     }
-    my $search = Google::Search->Web("q" => "site:perldoc.perl.org $arg1");
-    my $result = $search->first;
-    my $url = $result->uri . "\n";
+  $self->{SEARCH} = Google::Search->Web("q" => "site:perldoc.perl.org $arg1");
+  $self->{RESULT} = $self->{SEARCH}->first;
+}
+
+# Gets an XML file of the documentation.
+sub get_xml {
+    my $self = shift;
+    
+    my $url = $self->{RESULT}->uri . "\n";
 
     print $search->error->reason, "\n" if $search->error;
 
@@ -125,6 +133,7 @@ sub get_xml {
     close $file or die $!;
 
     `rm $filename`;
+    $self->{RESULT} = $self->{SEARCH}->next;
 
     return $out;
 
