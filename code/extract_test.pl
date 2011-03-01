@@ -11,7 +11,7 @@ use warnings;
 use HTML::Entities;
 require "extract.pl";
 
-my @keywords = ( "if", "statement" ); # test keywords
+my @keywords = ( "for", "loop" ); # test keywords
 
 my $data = "";
 open(FILE, "extract_test.xml") or die $!;

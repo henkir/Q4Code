@@ -145,6 +145,9 @@ sub extract_text {
 
     $self->{PROBABILITY} = $max;
 
+    $alternatives[$maxindex]->{"content"} =~ s/\n([, \.\(\)].\S)/$1/g;
+    $alternatives[$maxindex]->{"content"} =~ s/([^e][^>])  ([^<][^\/][^c])/$1 $2/g;
+
     # Return most probable keyword
     return $alternatives[$maxindex];
 }

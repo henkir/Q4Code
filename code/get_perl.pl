@@ -17,9 +17,9 @@ use HTML::Entities;
 sub new {
     my $class = shift;
     my $self = {};
-    
+
     $self->{KEYWORDS} = [];
-   
+
     bless($self, $class);
     return $self;
 }
@@ -51,16 +51,16 @@ sub search {
 # Gets an XML file of the documentation.
 sub get_xml {
     my $self = shift;
-    
+
     my $url = $self->{RESULT}->uri . "\n";
 
-    
+
 
     my @splittedurl = split /\//, $url;
     my $filename = pop(@splittedurl);
     my $file;
     chomp($filename);
-    print "$url\n";
+
     my $out = "<?xml version=\"1.0\">\n<sections>";
 
     `wget -q $url`;
