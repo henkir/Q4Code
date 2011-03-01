@@ -39,6 +39,7 @@ sub set_keywords {
 
 #search the web with the new keywords
 sub search {
+  my $self = shift;
   my $arg1;
     for my $keyword (@{$self->{KEYWORDS}}) {
 	$arg1 .= $keyword . " ";
@@ -53,7 +54,7 @@ sub get_xml {
     
     my $url = $self->{RESULT}->uri . "\n";
 
-    print $search->error->reason, "\n" if $search->error;
+    
 
     my @splittedurl = split /\//, $url;
     my $filename = pop(@splittedurl);
