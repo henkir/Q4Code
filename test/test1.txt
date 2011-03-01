@@ -1,0 +1,7 @@
+What does a for-loop look like in perl?
+How does a for-loop look like in perl?
+What is the syntax for a if statement?
+How does a if statement look like?
+How to read a file in perl?
+How to print to a file in perl?
+In perl, how to print to terminal?
