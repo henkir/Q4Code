@@ -27,6 +27,7 @@ else {
     die "No such language\n";
 }
 $get->set_keywords(\@keywords);
+$get->search();
 my $data = $get->get_xml();
 # Create object for extracting information
 my $ext = Extract->new($language, \@keywords);
