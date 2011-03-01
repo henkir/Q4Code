@@ -10,7 +10,6 @@ use strict;
 use warnings;
 use HTML::Entities;
 require "extract.pl";
-require "get_perl.pl";
 
 my @keywords = ( "for", "loop" ); # test keywords
 

@@ -110,25 +110,33 @@ sub extract_text {
     my $max = 0.0;
     my $maxindex = 0;
     my @keywords = $self->{KEYWORDS};
+    my $matching_words;
+    my $nr_title_words;
     # Calculate probabilities based on occurrence of keywords
     for my $obj (@alternatives) {
+	my @temp = split(/\W+/, $obj);
+	$nr_title_words = 0;
+	foreach my $t (@temp) {
+	    $nr_title_words += 1;
+	}
 	$probabilities[$i] = 1.0;
-	for (my $j = 0; $j < @keywords; $j += 1) {
-	    if ($obj->{"title"} =~ /[>\s]+{$self->{KEYWORDS}[$j]}[<\s]+/isg) {
+	$matching_words = 0;
+	for (my $j = 0; $j <= scalar(@keywords); $j += 1) {
+	    if ($obj->{"title"} =~ /$self->{KEYWORDS}[$j]/i) {
 		$probabilities[$i] *= 1;
-	    } elsif ($obj->{"title"} =~ /$self->{KEYWORDS}[$j]/isg) {
-		$probabilities[$i] *= 0.8;
+		$matching_words += 1;
 	    } else {
+		print $self->{KEYWORDS}[$j], "\n";
 		$probabilities[$i] *= 0.6;
 	    }
-	    if ($obj->{"content"} =~ /[>\s]+{$self->{KEYWORDS}[$j]}[<\s]+/isg) {
-		$probabilities[$i] *= 1;
-	    } elsif ($obj->{"content"} =~ /$self->{KEYWORDS}[$j]/isg) {
-		$probabilities[$i] *= 0.8;
+	    if ($obj->{"content"} =~ /$self->{KEYWORDS}[$j]/i) {
+	    	$probabilities[$i] *= 1;
 	    } else {
-		$probabilities[$i] *= 0.6;
+	    	$probabilities[$i] *= 0.6;
 	    }
 	}
+
+	$probabilities[$i] *= $matching_words / $nr_title_words;
 	if ($probabilities[$i] > $max) {
 	    $max = $probabilities[$i];
 	    $maxindex = $i;
