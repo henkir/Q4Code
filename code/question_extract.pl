@@ -51,7 +51,7 @@ sub get_question {
 
 sub set_question {
 	my $self = shift;
-	$self->{QUESTION} = shift;
+	$self->{QUESTION} = lc(shift);
 }
 
 sub extract_information {
@@ -59,6 +59,7 @@ sub extract_information {
 	
 	$self->extract_language();
 	$self->extract_keywords();
+	$self->extract_if_example_or_desc();
 }
 
 sub extract_language {
@@ -66,6 +67,21 @@ sub extract_language {
 	$self->{LANGUAGE} = "NONE";
 	if ($self->{QUESTION} =~ /(perl|python)/) {
 		$self->{LANGUAGE} = $1;
+	}
+}
+
+sub extract_if_example_or_desc {
+	my $self = shift;
+	my $question = $self->{QUESTION};
+	
+	if ($question =~ /(^what|look like)/) {
+		$self->{EXAMPLE} = "example";
+		$self->{DESCRIPTION} = "";
+	}
+	
+	if ($question =~ /(^how)/) { #perhaps include 'works?' into re
+		$self->{EXAMPLE} = "";
+		$self->{DESCRIPTION} = "description";
 	}
 }
 
@@ -94,13 +110,28 @@ sub extract_keywords {
 	}
 	
 	# FILE OUTPUT
-	if ($question =~/((write|output) to a? ?file|file output)/) {
+	if ($question =~ /((write|output) to a? ?file|file output)/) {
 		push( @{ $self->{KEYWORDS} }, "write to", "file");
 	} else {
 		# OUTPUT
 		if ($question =~ /(output|print)/) {
 			push( @{ $self->{KEYWORDS} }, "output");
 		}
+	}
+	
+	# IF STATEMENTS
+	if ($question =~ /([^a-zA-Z]if[^a-zA-Z])/) {
+		push( @{ $self->{KEYWORDS} }, "if");
+	}
+	
+	# CLASS
+	if ($question =~ /([^a-zA-Z]class[^a-zA-Z])/) {
+		push( @{ $self->{KEYWORDS} }, "class");		
+	}
+	
+	# FUNCTIONS
+	if ($question =~ /(function|routine)/) {
+		push( @{ $self->{KEYWORDS} }, "function");
 	}
 }
 

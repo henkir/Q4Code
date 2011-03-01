@@ -18,4 +18,7 @@ $qe->extract_information();
 my @keywords = $qe->get_keywords();
 for (@keywords) { print $_, "\n"; }
 
+print "EXAMPLE\n"		if $qe->get_example();
+print "DESCRIPTION\n"	if $qe->get_description();
+
 1;
