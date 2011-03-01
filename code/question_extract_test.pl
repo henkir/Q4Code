@@ -13,12 +13,11 @@ use warnings;
 require "question_extract.pl";
 
 my $qe = Question_extract->new();
-$qe->set_question("How to read from a file?");
-$qe->extract_information();
-my @keywords = $qe->get_keywords();
-for (@keywords) { print $_, "\n"; }
+while(<>){
+  $qe->set_question($_);
+  $qe->extract_information();
+  print $qe->get_question();
+}
 
-print "EXAMPLE\n"		if $qe->get_example();
-print "DESCRIPTION\n"	if $qe->get_description();
 
 1;

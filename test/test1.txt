@@ -5,3 +5,11 @@ How does a if statement look like?
 How to read a file in perl?
 How to print to a file in perl?
 In perl, how to print to terminal?
+How to write a switch statement in perl?
+How does perl pass arguments?
+Arguments in perl?
+Create a class in perl?
+Foreach loop in perl?
+Synax for arrays in perl?
+What does a function look like in perl?
+How to execute perl script?

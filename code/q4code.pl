@@ -14,8 +14,9 @@ require "question_extract.pl";
 my $qe = Question_extract->new();
 $qe->set_question($ARGV[0]);
 $qe->extract_information();
-my @keywords = $qe->get_keywords();
 my $language = $qe->extract_language();
+my @keywords = split(" ", $qe->get_question());
+print $qe->get_question(),"\n";
 # Get data from internet
 my $get;
 
@@ -27,7 +28,6 @@ else {
 }
 $get->set_keywords(\@keywords);
 my $data = $get->get_xml();
-
 # Create object for extracting information
 my $ext = Extract->new($language, \@keywords);
 # Set data of the extract object, formatted page from internet

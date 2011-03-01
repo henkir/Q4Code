@@ -50,7 +50,8 @@ sub get_xml {
     my @splittedurl = split /\//, $url;
     my $filename = pop(@splittedurl);
     my $file;
-
+    chomp($filename);
+    print "$url\n";
     my $out = "<?xml version=\"1.0\">\n<sections>";
 
     `wget -q $url`;

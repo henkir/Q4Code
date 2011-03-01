@@ -51,7 +51,10 @@ sub get_question {
 
 sub set_question {
 	my $self = shift;
+	
 	$self->{QUESTION} = lc(shift);
+	$self->{QUESTION} =~ s/[,?\.!]//g;
+	$self->{QUESTION} =~ s/-/ /g;
 }
 
 sub extract_information {
@@ -65,8 +68,13 @@ sub extract_information {
 sub extract_language {
 	my $self = shift;
 	$self->{LANGUAGE} = "NONE";
-	if ($self->{QUESTION} =~ /(perl|python)/) {
-		$self->{LANGUAGE} = $1;
+	if ($self->{QUESTION} =~ s/((in )?(perl))//) {
+		$self->{LANGUAGE} = $3;
+		# print "Språk: ", $3, "\n Fråga: ", $self->{QUESTION}, "\n";
+	}else{
+	  $self->{LANGUAGE} = "perl";
+	  # print "Språk: default(perl) \n";
+	  # print "Fråga: ", $self->{QUESTION}, "\n";
 	}
 }
 
@@ -74,15 +82,20 @@ sub extract_if_example_or_desc {
 	my $self = shift;
 	my $question = $self->{QUESTION};
 	
-	if ($question =~ /(^what|look like)/) {
-		$self->{EXAMPLE} = "example";
-		$self->{DESCRIPTION} = "";
+	if ($question =~ s/(what )//) {
+		$self->{EXAMPLE} = 1;
+		$self->{DESCRIPTION} = 0;
+	} elsif ($question =~ s/(how )//) {
+		$self->{EXAMPLE} = 0;
+		$self->{DESCRIPTION} = 1;
 	}
+
+	$question =~ s/(does |do |to )(a |you )?(use )?//g;
+	$question =~ s/look( like)?//g;
+	$question =~ s/statement[s]? ?//g;
+
+	$self->{QUESTION} = $question;
 	
-	if ($question =~ /(^how)/) { #perhaps include 'works?' into re
-		$self->{EXAMPLE} = "";
-		$self->{DESCRIPTION} = "description";
-	}
 }
 
 sub extract_keywords {
@@ -133,6 +146,7 @@ sub extract_keywords {
 	if ($question =~ /(function|routine)/) {
 		push( @{ $self->{KEYWORDS} }, "function");
 	}
+
 }
 
 1;
