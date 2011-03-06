@@ -73,16 +73,30 @@ sub strip_to_keywords {
 	my $question = $self->{QUESTION};
 	
 	my @removal = ( # not final
-		"(does |do |to )(a |you )?(use )?",
-		"look ?(like ?)?",
-		"statements? ?",
-		"what ?",
-		"how ?",
-		"the ?",
+		"a",
+		"actually",
+		"can\'?t?",
+		"do",
+		"does",
+		"how",
+		"given",
+		"independent",
+		"i",
+		"is",
+		"like",
+		"look",
+		"statements?",
+		"the",
+		"to",
+		"use",
+		"what",
+		"why",
+		"work",
+		"you",
 	);
 
 	for my $to_remove (@removal) {
-		$question =~ s/[^a-zA-Z]?$to_remove[^a-zA-Z]?//g;
+		$question =~ s/(^$to_remove|[^a-z]$to_remove[^a-z])/ /g;
 	}
 
 	$self->{QUESTION} = $question;	
