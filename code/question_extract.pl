@@ -3,8 +3,7 @@
 ###############################################################################
 # question_extract.pl
 # Provides a class Question_extract for extracting information from a provided 
-# question. Extracts whether example or description is sought after and in 
-# which programming language. Strips provided question down to keywords.
+# question. Strips provided question down to keywords and extracts language.
 ###############################################################################
 
 package Question_extract;
@@ -15,33 +14,27 @@ use warnings;
 sub new {
 	my $class = shift;
 	my $self  = {};
-	$self->{EXAMPLE}		= undef;
-	$self->{DESCRIPTION}	= undef;
+	#$self->{EXAMPLE}		= undef;
+	#$self->{DESCRIPTION}	= undef;
 	$self->{LANGUAGE}		= undef;
-	$self->{KEYWORDS}		= ();
 	$self->{QUESTION}		= undef;
 	bless($self, $class);
 	return $self;
 }
 
-sub get_example {
-	my $self = shift;
-	return $self->{EXAMPLE};
-}
+#sub get_example {
+#	my $self = shift;
+#	return $self->{EXAMPLE};
+#}
 
-sub get_description {
-	my $self = shift;
-	return $self->{DESCRIPTION};
-}
+#sub get_description {
+#	my $self = shift;
+#	return $self->{DESCRIPTION};
+#}
 
 sub get_language {
 	my $self = shift;
 	return $self->{LANGUAGE};
-}
-
-sub get_keywords {
-	my $self = shift;
-	return @{ $self->{KEYWORDS} };
 }
 
 sub get_question {
@@ -61,37 +54,36 @@ sub extract_information {
 	my $self = shift;
 	
 	$self->extract_language();
-	$self->extract_if_example_or_desc();
+	$self->strip_to_keywords();
 }
 
 sub extract_language {
 	my $self = shift;
 	$self->{LANGUAGE} = "NONE";
-	if ($self->{QUESTION} =~ s/((in )?(perl))//) {
+	
+	if ($self->{QUESTION} =~ s/((in )?(perl\'?s?)) ?//) {
 		$self->{LANGUAGE} = $3;
-	}else{
+	} else{
 	  $self->{LANGUAGE} = "perl";
 	}
 }
 
-sub extract_if_example_or_desc {
+sub strip_to_keywords {
 	my $self = shift;
 	my $question = $self->{QUESTION};
 	
-	if ($question =~ s/(what )//) {
-		$self->{EXAMPLE} = 1;
-		$self->{DESCRIPTION} = 0;
-	} elsif ($question =~ s/(how )//) {
-		$self->{EXAMPLE} = 0;
-		$self->{DESCRIPTION} = 1;
-	} else { # default: description
-		$self->{EXAMPLE} = 0;
-		$self->{DESCRIPTION} = 1;
-	}
+	my @removal = ( # not final
+		"(does |do |to )(a |you )?(use )?",
+		"look ?(like ?)?",
+		"statements? ?",
+		"what ?",
+		"how ?",
+		"the ?",
+	);
 
-	$question =~ s/(does |do |to )(a |you )?(use )?//g;
-	$question =~ s/look( like)?//g;
-	$question =~ s/statement[s]? ?//g;
+	for my $to_remove (@removal) {
+		$question =~ s/[^a-zA-Z]?$to_remove[^a-zA-Z]?//g;
+	}
 
 	$self->{QUESTION} = $question;	
 }

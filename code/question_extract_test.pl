@@ -16,7 +16,7 @@ my $qe = Question_extract->new();
 while(<>){
   $qe->set_question($_);
   $qe->extract_information();
-  print $qe->get_question();
+  print $qe->get_question(), "\n";
 }
 
 

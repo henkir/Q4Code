@@ -13,3 +13,8 @@ Foreach loop in perl?
 Synax for arrays in perl?
 What does a function look like in perl?
 How to execute perl script?
+What is Perl equivalent of Python's type() function
+Why can't I match a substring which may appear 0 or 1 time using /(subpattern)?/
+Perl's Date::Manip - how to convert a given date into another timezone
+Length of string in Perl independent of character encoding
+How does List::Util 'shuffle' actually work?
